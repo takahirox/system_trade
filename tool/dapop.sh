@@ -61,7 +61,50 @@
 #
 
 indir=./csv_data/
+nk225_indir=./csv_data/nk225
+topix_indir=./csv_data/topix
 nk225_future_mini_indir=./csv_data/nk225_future_mini
+dji_indir=./csv_data/dji
+
+echo [log] nk225 daily load start.
+for file in $(ls ${nk225_indir}/daily/*.csv)
+do
+  echo [log] $file load start.
+  mysql -u takahiro --local-infile << EOD
+    use system_trade;
+    load data local
+      infile '$file' into table nk225_daily_master
+      columns terminated by ',';
+EOD
+  echo [log] $file load end.
+done
+echo [log] nk225 daily load end.
+
+mysql -u takahiro << EOD
+  use system_trade;
+  select count(*) from nk225_daily_master;
+EOD
+
+
+echo [log] topix daily load start.
+for file in $(ls ${topix_indir}/daily/*.csv)
+do
+  echo [log] $file load start.
+  mysql -u takahiro --local-infile << EOD
+    use system_trade;
+    load data local
+      infile '$file' into table topix_daily_master
+      columns terminated by ',';
+EOD
+  echo [log] $file load end.
+done
+echo [log] topix daily load end.
+
+mysql -u takahiro << EOD
+  use system_trade;
+  select count(*) from topix_daily_master;
+EOD
+
 
 echo [log] nk225 future mini daily load start.
 for file in $(ls ${nk225_future_mini_indir}/daily/*.csv)
@@ -70,7 +113,7 @@ do
   mysql -u takahiro --local-infile << EOD
     use system_trade;
     load data local
-      infile '$file' into table nk225_future_mini_daily
+      infile '$file' into table nk225_future_mini_daily_master
       columns terminated by ',';
 EOD
   echo [log] $file load end.
@@ -79,7 +122,7 @@ echo [log] nk225 future mini daily load end.
 
 mysql -u takahiro << EOD
   use system_trade;
-  select count(*) from nk225_future_mini_daily;
+  select count(*) from nk225_future_mini_daily_master;
 EOD
 
 
@@ -102,3 +145,25 @@ mysql -u takahiro << EOD
   select count(*) from nk225_future_mini_minutely;
 EOD
 
+
+echo [log] dji daily load start.
+for file in $(ls ${dji_indir}/daily/*.csv)
+do
+  echo [log] $file load start.
+  mysql -u takahiro --local-infile << EOD
+    use system_trade;
+    load data local
+      infile '$file' into table dji_daily_master
+      columns terminated by ',';
+EOD
+  echo [log] $file load end.
+done
+echo [log] dji daily load end.
+
+mysql -u takahiro << EOD
+  use system_trade;
+  select count(*) from dji_daily_master;
+EOD
+
+
+mysql -u takahiro < ./sqls/generate_data.sql
