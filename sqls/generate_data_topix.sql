@@ -47,6 +47,18 @@ update topix_daily t3
       t3.change_percentage=t4.change_percentage;
 
 
+-- generate topix daily stick
+update topix_daily t1
+  inner join (
+    select date date,
+           close-open candle
+    from topix_daily
+    order by date
+  ) t2
+  on t1.date=t2.date
+  set t1.candle=t2.candle;
+
+
 -- generate topix daily ma
 update topix_daily t3
   inner join (

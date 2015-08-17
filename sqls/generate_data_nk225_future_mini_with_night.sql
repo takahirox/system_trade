@@ -106,6 +106,18 @@ update nk225_future_mini_daily_with_night t3
       t3.change_percentage=t4.change_percentage;
 
 
+-- generate nk225_future_mini_daily_with_night stick
+update nk225_future_mini_daily_with_night t1
+  inner join (
+    select date date,
+           close-open candle
+    from nk225_future_mini_daily_with_night
+    order by date
+  ) t2
+  on t1.date=t2.date
+  set t1.candle=t2.candle;
+
+
 -- generate nk225_future_mini daily ma
 update nk225_future_mini_daily_with_night t3
   inner join (

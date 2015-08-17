@@ -47,6 +47,18 @@ update nk225_daily t3
       t3.change_percentage=t4.change_percentage;
 
 
+-- generate nk225_daily stick
+update nk225_daily t1
+  inner join (
+    select date date,
+           close-open candle
+    from nk225_daily
+    order by date
+  ) t2
+  on t1.date=t2.date
+  set t1.candle=t2.candle;
+
+
 -- generate nk225 daily ma
 update nk225_daily t3
   inner join (

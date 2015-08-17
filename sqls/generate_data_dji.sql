@@ -37,6 +37,18 @@ update dji_daily t3
       t3.change_percentage=t4.change_percentage;
 
 
+-- generate dji daily stick
+update dji_daily t1
+  inner join (
+    select date date,
+           close-open candle
+    from dji_daily
+    order by date
+  ) t2
+  on t1.date=t2.date
+  set t1.candle=t2.candle;
+
+
 -- generate dji daily ma
 update dji_daily t3
   inner join (
