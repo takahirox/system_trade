@@ -108,3 +108,20 @@ update nk225_daily t3
   on t3.date=t4.date
   set t3.ma75=t4.ma;
 
+update nk225_daily t3
+  inner join (
+    select t1.date date,
+           t1.ma5-t2.ma5 ma5_change,
+           t1.ma10-t2.ma10 ma10_change,
+           t1.ma25-t2.ma25 ma25_change,
+           t1.ma75-t2.ma75 ma75_change
+    from nk225_daily t1,
+         nk225_daily t2
+    where t1.id=t2.id+1
+  ) t4
+  on t3.date=t4.date
+  set t3.ma5_change=t4.ma5_change,
+      t3.ma10_change=t4.ma10_change,
+      t3.ma25_change=t4.ma25_change,
+      t3.ma75_change=t4.ma75_change;
+

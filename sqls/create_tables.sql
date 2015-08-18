@@ -25,9 +25,13 @@ create table nk225_daily (
   change_percentage float(5,2),
   candle float(7,2),
   ma5 float(7,2),
+  ma5_change float(7,2),
   ma10 float(7,2),
+  ma10_change float(7,2),
   ma25 float(7,2),
-  ma75 float(7,2)
+  ma25_change float(7,2),
+  ma75 float(7,2),
+  ma75_change float(7,2)
 );
 describe nk225_daily;
 
@@ -56,9 +60,13 @@ create table topix_daily (
   change_percentage float(5,2),
   candle float(7,2),
   ma5 float(7,2),
+  ma5_change float(7,2),
   ma10 float(7,2),
+  ma10_change float(7,2),
   ma25 float(7,2),
-  ma75 float(7,2)
+  ma25_change float(7,2),
+  ma75 float(7,2),
+  ma75_change float(7,2)
 );
 describe topix_daily;
 
@@ -91,9 +99,13 @@ create table nk225_future_mini_daily (
   change_percentage float(5,2),
   candle int,
   ma5 float(7,2),
+  ma5_change float(7,2),
   ma10 float(7,2),
+  ma10_change float(7,2),
   ma25 float(7,2),
-  ma75 float(7,2)
+  ma25_change float(7,2),
+  ma75 float(7,2),
+  ma75_change float(7,2)
 );
 describe nk225_future_mini_daily;
 
@@ -112,9 +124,13 @@ create table nk225_future_mini_daily_with_night (
   change_percentage float(5,2),
   candle int,
   ma5 float(7,2),
+  ma5_change float(7,2),
   ma10 float(7,2),
+  ma10_change float(7,2),
   ma25 float(7,2),
-  ma75 float(7,2)
+  ma25_change float(7,2),
+  ma75 float(7,2),
+  ma75_change float(7,2)
 );
 describe nk225_future_mini_daily_with_night;
 
@@ -129,10 +145,14 @@ create table nk225_future_mini_minutely (
   close int,
   volume int,
   trading_value int,
-  ma5 int,
-  ma10 int,
-  ma25 int,
-  ma75 int
+  ma5 float(7,2),
+  ma5_change float(7,2),
+  ma10 float(7,2),
+  ma10_change float(7,2),
+  ma25 float(7,2),
+  ma25_change float(7,2),
+  ma75 float(7,2),
+  ma75_change float(7,2)
 );
 describe nk225_future_mini_minutely;
 
@@ -161,9 +181,13 @@ create table dji_daily (
   change_percentage float(5,2),
   candle float(7,2),
   ma5 float(7,2),
+  ma5_change float(7,2),
   ma10 float(7,2),
+  ma10_change float(7,2),
   ma25 float(7,2),
-  ma75 float(7,2)
+  ma25_change float(7,2),
+  ma75 float(7,2),
+  ma75_change float(7,2)
 );
 describe dji_daily;
 
