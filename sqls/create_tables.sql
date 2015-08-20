@@ -192,5 +192,39 @@ create table dji_daily (
 describe dji_daily;
 
 
+drop table if exists usdjpy_daily_master;
+create table usdjpy_daily_master (
+  date date,
+  open float(5,2),
+  high float(5,2),
+  low float(5,2),
+  close float(5,2)
+);
+describe usdjpy_daily_master;
+
+
+drop table if exists usdjpy_daily;
+create table usdjpy_daily (
+  date date,
+  open float(5,2),
+  high float(5,2),
+  low float(5,2),
+  close float(5,2),
+  id int,
+  change_price float(5,2),
+  change_percentage float(5,2),
+  candle float(5,2),
+  ma5 float(5,2),
+  ma5_change float(5,2),
+  ma10 float(5,2),
+  ma10_change float(5,2),
+  ma25 float(5,2),
+  ma25_change float(5,2),
+  ma75 float(5,2),
+  ma75_change float(5,2)
+);
+describe usdjpy_daily;
+
+
 show tables;
 

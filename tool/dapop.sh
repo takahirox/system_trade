@@ -65,6 +65,7 @@ nk225_indir=./csv_data/nk225
 topix_indir=./csv_data/topix
 nk225_future_mini_indir=./csv_data/nk225_future_mini
 dji_indir=./csv_data/dji
+usdjpy_indir=./csv_data/usdjpy
 
 echo [log] nk225 daily load start.
 for file in $(ls ${nk225_indir}/daily/*.csv)
@@ -163,6 +164,26 @@ echo [log] dji daily load end.
 mysql -u takahiro << EOD
   use system_trade;
   select count(*) from dji_daily_master;
+EOD
+
+
+echo [log] usdjpy daily load start.
+for file in $(ls ${usdjpy_indir}/daily/*.csv)
+do
+  echo [log] $file load start.
+  mysql -u takahiro --local-infile << EOD
+    use system_trade;
+    load data local
+      infile '$file' into table usdjpy_daily_master
+      columns terminated by ',';
+EOD
+  echo [log] $file load end.
+done
+echo [log] usdjpy daily load end.
+
+mysql -u takahiro << EOD
+  use system_trade;
+  select count(*) from usdjpy_daily_master;
 EOD
 
 
