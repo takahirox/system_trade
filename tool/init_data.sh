@@ -65,4 +65,5 @@
 ./tool/init_nk225_future_mini_daily_data.sh
 ./tool/init_nk225_future_mini_minutely_data.sh
 ./tool/init_topix_daily_data.sh
+./tool/init_usdjpy_daily_data.sh
 
