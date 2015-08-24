@@ -115,7 +115,9 @@ function pf_field {
                then 1
                else 0
            end
-         ) negative_count
+         ) negative_count,
+         max(value) max,
+         min(value) min
 "
 }
 
@@ -127,10 +129,14 @@ function result_field {
        tbl.count c,
        tbl.positive p,
        tbl.negative n,
+       tbl.max max,
+       tbl.min min,
        tbl.positive_count pc,
        tbl.negative_count nc,
        tbl.positive/tbl.positive_count p_pc,
-       tbl.negative/tbl.negative_count n_nc
+       tbl.negative/tbl.negative_count n_nc,
+       tbl.positive_count/tbl.count*100 pp,
+       tbl.negative_count/tbl.count*100 np
 "
 }
 

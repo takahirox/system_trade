@@ -75,9 +75,9 @@ if [ ! -e $logdir ]; then
   echo [log] $logdir directory was generated.
 fi
 
-echo [log] load $y
-wget -o $logdir/${file_prefix}_${y}.log \
-     -O $outdir/${file_prefix}_${y}.csv \
+echo [log] load $file_prefix 
+wget -o $logdir/${file_prefix}.log \
+     -O $outdir/${file_prefix}.csv \
      ${url}
-echo [log] load $y done
+echo [log] load $file_prefix done
 

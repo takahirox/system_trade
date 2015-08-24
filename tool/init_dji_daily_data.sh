@@ -60,6 +60,6 @@
 # HOGE=$1
 #
 
-#./tool/get_dji_daily_data.sh
+./tool/get_dji_daily_data.sh
 ./tool/convert_dji_daily_data.sh
 

@@ -80,11 +80,11 @@ fi
 
 for y in $(seq $start $end)
 do
-  echo [log] load $y
+  echo [log] load $file_prefix $y
   wget -o $logdir/${file_prefix}_${y}.log \
        -O $outdir/${file_prefix}_${y}.csv \
        ${url}\?year=${y}\&download=csv
-  echo [log] load $y done
+  echo [log] load $file_prefix $y done
   if [ "$y" -ne "$end" ]; then
     echo [log] sleep $sleep_sec sec for the server.
     sleep $sleep_sec

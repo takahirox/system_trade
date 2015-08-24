@@ -75,7 +75,7 @@ if [ ! -e $logdir ]; then
   echo [log] $logdir directory was generated.
 fi
 
-echo [log] start.
+echo [log] $file_prefix $d start.
 
 wget -o .tmp_log -O .tmp_file $url\?download=csv
 d=$(iconv -f SHIFT-JIS -t UTF-8 .tmp_file | tail -1 | cut -d, -f1)
@@ -83,5 +83,5 @@ d=$(iconv -f SHIFT-JIS -t UTF-8 .tmp_file | tail -1 | cut -d, -f1)
 mv .tmp_log ${logdir}/${file_prefix}_${d}.log
 mv .tmp_file ${outdir}/${file_prefix}_${d}.csv
 
-echo [log] ${d} done.
+echo [log] $file_prefix $d done.
 

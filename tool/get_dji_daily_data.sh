@@ -62,10 +62,10 @@
 
 outdir=./raw_data/dji/daily
 logdir=./log/dji/daily
-url='http://k-db.com/indices/I102/a'
-start=2007
-end=2015
-sleep_sec=3
+url='http://www.torezista.com/assist/dji_tool.php'
+post_data='format=CSV'
+post_data+='&how=%C1%B0%C6%FC%C8%E6%A1%CA%A5%C9%A5%EB%A1%CB'
+post_data+='&filename=tmp.csv'
 file_prefix=$(basename $0 .sh)
 
 if [ ! -e $outdir ]; then
@@ -78,16 +78,10 @@ if [ ! -e $logdir ]; then
   echo [log] $logdir directory was generated.
 fi
 
-for y in $(seq $start $end)
-do
-  echo [log] load $y
-  wget -o $logdir/${file_prefix}_${y}.log \
-       -O $outdir/${file_prefix}_${y}.csv \
-       ${url}\?year=${y}\&download=csv
-  echo [log] load $y done
-  if [ "$y" -ne "$end" ]; then
-    echo [log] sleep $sleep_sec sec for the server.
-    sleep $sleep_sec
-  fi
-done
+echo [log] load $file_prefix
+wget -o $logdir/${file_prefix}.log \
+     -O $outdir/${file_prefix}.csv \
+     ${url} \
+     --post-data="${post_data}"
+echo [log] load $file_prefix done
 
