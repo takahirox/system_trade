@@ -155,6 +155,18 @@ from (
 \G
 ;
 EOD
+
+  echo
+
+  win_lose=$(output_daily \
+    | sed -e '1,1d' \
+    | cut -f2 \
+    | ./tool/count_win_lose_in_a_row.py)
+  win_num=$(echo $win_lose | cut -d' ' -f1)
+  lose_num=$(echo $win_lose | cut -d' ' -f2)
+
+  echo 'max_consecutive_win#' $win_num
+  echo 'max_consecutive_lose#' $lose_num
 }
 
 function output_yearly {
