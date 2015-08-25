@@ -35,7 +35,16 @@
 
 
 function usage { 
-  echo "usage : $0 <strategy file>"
+  echo "usage : $0 [options] <strategy file>"
+  echo
+  echo "options :"
+  echo "  -t total (default)"
+  echo "  -y yearly"
+  echo "  -m monthly"
+  echo "  -d daily"
+  echo "  -o over"
+  echo "  -h help"
+  echo
   echo "ex ) $0 ./strategies/hoge.sql"
   exit
 }
@@ -59,6 +68,11 @@ do
   esac
 done
 shift $(($OPTIND - 1))
+
+if [ $YEARLY_FLAG -eq 0 -a $MONTHLY_FLAG -eq 0 -a \
+     $DAILY_FLAG -eq 0 -a $OVER_FLAG -eq 0 ]; then
+  TOTAL_FLAG=1
+fi
 
 
 if [ $# -ne 1 ]; then

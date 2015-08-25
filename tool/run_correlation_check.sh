@@ -36,9 +36,12 @@
 
 function usage { 
   echo "usage : $0 [options] <table1> <table2>"
-  echo "options : -t  total (default)"
-  echo "        : -y  yearly"
-  echo "        : -m  monthly"
+  echo
+  echo "options :"
+  echo "  -t  total (default)"
+  echo "  -y  yearly"
+  echo "  -m  monthly"
+  echo
   echo "ex ) $0 nk225_daily dji_daily"
   exit
 }
