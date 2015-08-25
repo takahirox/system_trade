@@ -27,6 +27,9 @@ max_win = 0
 max_lose = 0
 count_win = 0
 count_lose = 0
+sum = 0.0
+max_sum = 0.0
+max_drawdown = 0.0
 
 for line in stream:
   n = float(line)
@@ -41,6 +44,14 @@ for line in stream:
     if count_lose > max_lose:
       max_lose = count_lose
 
-print max_win, max_lose
+  sum += n
+
+  if sum > max_sum:
+    max_sum = sum
+
+  if sum - max_sum < max_drawdown:
+    max_drawdown = sum - max_sum
+
+print max_win, max_lose, max_drawdown
 
 

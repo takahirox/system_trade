@@ -164,9 +164,11 @@ EOD
     | ./tool/count_win_lose_in_a_row.py)
   win_num=$(echo $win_lose | cut -d' ' -f1)
   lose_num=$(echo $win_lose | cut -d' ' -f2)
+  max_drawdown=$(echo $win_lose | cut -d' ' -f3)
 
-  echo 'max_consecutive_win#' $win_num
+  echo 'max_consecutive_win# ' $win_num
   echo 'max_consecutive_lose#' $lose_num
+  echo 'max_drawdown         ' $max_drawdown
 }
 
 function output_yearly {
