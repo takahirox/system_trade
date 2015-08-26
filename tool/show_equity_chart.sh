@@ -72,13 +72,13 @@ gnuplot -p << EOD &
 set xdata time
 set timefmt "%Y-%m-%d"
 set datafile separator "\t"
-plot "${datfile}" u 1:4 w l
+plot "${datfile}" u 1:3 w l
 EOD
 
 #gnuplot -p << EOD &
 #set xdata time
 #set timefmt "%Y-%m-%d"
 #set datafile separator "\t"
-#plot "${datfile}" u 1:3 w l
+#plot "${datfile}" u 1:2 w l
 #EOD
 

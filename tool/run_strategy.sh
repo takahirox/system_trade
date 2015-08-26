@@ -69,231 +69,72 @@ do
 done
 shift $(($OPTIND - 1))
 
+if [ $# -ne 1 ]; then
+  usage
+fi
+
+
 if [ $YEARLY_FLAG -eq 0 -a $MONTHLY_FLAG -eq 0 -a \
      $DAILY_FLAG -eq 0 -a $OVER_FLAG -eq 0 ]; then
   TOTAL_FLAG=1
 fi
 
+OPTIONS=""
 
-if [ $# -ne 1 ]; then
-  usage
+if [ $TOTAL_FLAG -eq 1 ]; then
+  OPTIONS+=" -t"
+fi
+
+if [ $YEARLY_FLAG -eq 1 ]; then
+  OPTIONS+=" -y"
+fi
+
+if [ $MONTHLY_FLAG -eq 1 ]; then
+  OPTIONS+=" -m"
+fi
+
+if [ $DAILY_FLAG -eq 1 ]; then
+  OPTIONS+=" -d"
+fi
+
+if [ $OVER_FLAG -eq 1 ]; then
+  OPTIONS+=" -o"
 fi
 
 file=$1
 
-if [ $OVER_FLAG -eq 1 ]; then
-  TOTAL_FLAG=0
-  YEARLY_FLAG=0
-  MONTHLY_FLAG=0
-  DAILY_FLAG=0
-fi
-
-function insert_field {
+function output_sql {
   echo "
-  select t2.id entry_id,
+  select t1.id triger_id,
+         t2.id entry_id,
          t3.id leave_id,
+         t1.date triger_date,
          t2.date entry_date,
          t3.date leave_date,
+         0 is_losscut,
 "
-  cat $1 | sed -e '1,1d'
-}
+  cat $1 \
+    | perl -pe "s/^\s*--.*$//g" \
+    | perl -pe "s/\n/ /g" \
+    | perl -pe "s/select//" \
+    | perl -pe "s/;.*$//g" 
 
-function pf_field {
   echo "
-         count(*) count,
-         sum(value) sum,
-         sum(
-           case
-             when value>0
-               then value
-               else 0
-           end
-         ) positive,
-         sum(
-           case
-             when value>0
-               then 1
-               else 0
-           end
-         ) positive_count,
-         sum(
-           case
-             when value<0
-               then value
-               else 0
-           end
-         ) negative,
-         sum(
-           case
-             when value<0
-               then 1
-               else 0
-           end
-         ) negative_count,
-         max(value) max,
-         min(value) min
+  order by t1.id;
 "
 }
 
-function result_field {
-  echo "
-       tbl.sum s,
-       abs(tbl.positive)/abs(tbl.negative) pf,
-       tbl.sum*100-tbl.count*100 p_w_fee,
-       tbl.count c,
-       tbl.positive p,
-       tbl.negative n,
-       tbl.max max,
-       tbl.min min,
-       tbl.positive_count pc,
-       tbl.negative_count nc,
-       tbl.positive/tbl.positive_count p_pc,
-       tbl.negative/tbl.negative_count n_nc,
-       tbl.positive_count/tbl.count*100 pp,
-       tbl.negative_count/tbl.count*100 np
-"
-}
+# output_sql $file
 
-function output_total {
-  mysql -u $USER << EOD
+mysql -u $USER << EOD > .tmp
 use system_trade;
-select
-  $(result_field)
-from (
-  select
-    $(pf_field)
-  from (
-    $(insert_field $file)
-  ) t
-) tbl
-\G
-;
+$(output_sql $file)
 EOD
 
-  echo
+cat .tmp \
+  | sed "1,1d" \
+  | ./tool/extract_result.py \
+  | ./tool/tidy_result.py $OPTIONS
 
-  win_lose=$(output_daily \
-    | sed -e '1,1d' \
-    | cut -f2 \
-    | ./tool/count_win_lose_in_a_row.py)
-  win_num=$(echo $win_lose | cut -d' ' -f1)
-  lose_num=$(echo $win_lose | cut -d' ' -f2)
-  max_drawdown=$(echo $win_lose | cut -d' ' -f3)
-
-  echo 'max_consecutive_win# ' $win_num
-  echo 'max_consecutive_lose#' $lose_num
-  echo 'max_drawdown         ' $max_drawdown
-}
-
-function output_yearly {
-  mysql -u $USER << EOD
-use system_trade;
-select
-  tbl.year,
-  $(result_field)
-from (
-  select
-    YEAR(t.entry_date) year,
-    $(pf_field)
-  from (
-    $(insert_field $file)
-  ) t
-  group by YEAR(t.entry_date)
-  order by YEAR(t.entry_date)
-) tbl
-;
-EOD
-}
-
-function output_monthly {
-  mysql -u $USER << EOD
-use system_trade;
-select
-  tbl.year,
-  tbl.month,
-  $(result_field)
-from (
-  select
-    YEAR(t.entry_date) year,
-    MONTH(t.entry_date) month,
-    $(pf_field)
-  from (
-    $(insert_field $file)
-  ) t
-  group by YEAR(t.entry_date),
-           MONTH(t.entry_date)
-  order by YEAR(t.entry_date),
-           MONTH(t.entry_date)
-) tbl
-;
-EOD
-}
-
-function output_daily {
-  mysql -u $USER << EOD
-use system_trade;
-select
-  tbl.date,
-  $(result_field)
-from (
-  select
-    t.entry_date date,
-    $(pf_field)
-  from (
-    $(insert_field $file)
-  ) t
-  group by t.entry_date
-  order by t.entry_date
-) tbl
-;
-EOD
-}
-
-function output_over {
-  mysql -u $USER << EOD
-use system_trade;
-select
-  tbl.entry_date,
-  tbl.entry_id,
-  tbl.value,
-  (
-    select
-      sum(tbl2.value)
-    from (
-      $(insert_field $file) 
-    ) tbl2
-    where
-      tbl2.entry_date <= tbl.entry_date
-  ) over
-from (
-  $(insert_field $file)
-) tbl
-order by tbl.entry_date
-;
-EOD
-}
-
-if [ $TOTAL_FLAG -eq 1 ]; then
-  output_total | sed -e '1,1d'
-  echo
-fi
-
-if [ $YEARLY_FLAG -eq 1 ]; then
-  output_yearly
-  echo
-fi
-
-if [ $MONTHLY_FLAG -eq 1 ]; then
-  output_monthly
-  echo
-fi
-
-if [ $DAILY_FLAG -eq 1 ]; then
-  output_daily
-  echo
-fi
-
-if [ $OVER_FLAG -eq 1 ]; then
-  output_over | sed -e '1,1d' 
-fi
+rm -f .tmp
 
