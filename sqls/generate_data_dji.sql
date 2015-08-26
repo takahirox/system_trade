@@ -37,16 +37,20 @@ update dji_daily t3
       t3.change_percentage=t4.change_percentage;
 
 
--- generate dji daily stick
+-- generate dji daily candle
 update dji_daily t1
   inner join (
     select date date,
-           close-open candle
+           close-open candle,
+           high-GREATEST(open, close) top_beard,
+           LEAST(open, close)-low bottom_beard
     from dji_daily
     order by date
   ) t2
   on t1.date=t2.date
-  set t1.candle=t2.candle;
+  set t1.candle=t2.candle,
+      t1.top_beard=t2.top_beard,
+      t1.bottom_beard=t2.bottom_beard;
 
 
 -- generate dji daily ma

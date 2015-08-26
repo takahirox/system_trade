@@ -106,16 +106,20 @@ update nk225_future_mini_daily_with_night t3
       t3.change_percentage=t4.change_percentage;
 
 
--- generate nk225_future_mini_daily_with_night stick
+-- generate nk225_future_mini_daily_with_night candle
 update nk225_future_mini_daily_with_night t1
   inner join (
     select date date,
-           close-open candle
+           close-open candle,
+           high-GREATEST(open, close) top_beard,
+           LEAST(open, close)-low bottom_beard
     from nk225_future_mini_daily_with_night
     order by date
   ) t2
   on t1.date=t2.date
-  set t1.candle=t2.candle;
+  set t1.candle=t2.candle,
+      t1.top_beard=t2.top_beard,
+      t1.bottom_beard=t2.bottom_beard;
 
 
 -- generate nk225_future_mini daily ma
