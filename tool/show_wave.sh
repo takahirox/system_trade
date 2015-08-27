@@ -67,9 +67,12 @@ fi
 date=$1
 range=$2
 
-outfile=./chart/tmp
+datdir=./chart
+filename=${datdir}/${date}_${range}_${table}
+datfile=${filename}.dat
+imgfile=${filename}.png
 
-mysql -u $USER << EOD | sed "1,1d" > $outfile
+mysql -u $USER << EOD | sed "1,1d" > $datfile
 use system_trade;
 select date,
        open,
@@ -87,12 +90,17 @@ where id between
 order by date;
 EOD
 
-gnuplot -p << EOD &
+gnuplot -p << EOD
 set xtics rotate by 270
+set term png
+set output "${imgfile}"
 plot \
-  "${outfile}" u (\$0):2:3:4:5:xtic(1) w candlesticks title "candle", \
+  "${datfile}" u (\$0):2:3:4:5:xtic(1) w candlesticks title "candle", \
   "" u (\$0):6 w l title "MA5", \
   "" u (\$0):7 w l title "MA25", \
   "" u (\$0):8 w l title "MA75"
+set output
 EOD
+
+display $imgfile &
 

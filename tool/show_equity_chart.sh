@@ -60,6 +60,7 @@ fi
 file=$1
 datdir=./chart
 datfile=${datdir}/$(basename $file .sql)_equity.dat
+imgfile=${datdir}/$(basename $file .sql)_equity.png
 
 if [ ! -e $datdir ]; then
   mkdir -p $datdir
@@ -68,17 +69,15 @@ fi
 
 ./tool/run_strategy.sh -o $file > $datfile
 
-gnuplot -p << EOD &
+gnuplot -p << EOD
+set xtics rotate by 270
 set xdata time
 set timefmt "%Y-%m-%d"
 set datafile separator "\t"
+set term png
+set output "${imgfile}"
 plot "${datfile}" u 1:3 w l
+set output
 EOD
 
-#gnuplot -p << EOD &
-#set xdata time
-#set timefmt "%Y-%m-%d"
-#set datafile separator "\t"
-#plot "${datfile}" u 1:2 w l
-#EOD
-
+display $imgfile &
