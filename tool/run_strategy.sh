@@ -38,11 +38,13 @@ function usage {
   echo "usage : $0 [options] <strategy file>"
   echo
   echo "options :"
-  echo "  -t total (default)"
+  echo "  -s summary (default)"
   echo "  -y yearly"
   echo "  -m monthly"
   echo "  -d daily"
   echo "  -o over"
+  echo "  -f <date> from"
+  echo "  -t <date> to"
   echo "  -h help"
   echo
   echo "ex ) $0 ./strategies/hoge.sql"
@@ -50,20 +52,24 @@ function usage {
 }
 
 
-TOTAL_FLAG=0
+SUMMARY_FLAG=0
 YEARLY_FLAG=0
 MONTHLY_FLAG=0
 DAILY_FLAG=0
 OVER_FLAG=0
+FROM_DATE=""
+TO_DATE=""
 
-while getopts "tymdoh" options
+while getopts "symdof:t:h" options
 do
   case $options in
-    t     ) TOTAL_FLAG=1;;
+    s     ) SUMMARY_FLAG=1;;
     y     ) YEARLY_FLAG=1;;
     m     ) MONTHLY_FLAG=1;;
     d     ) DAILY_FLAG=1;;
     o     ) OVER_FLAG=1;;
+    f     ) FROM_DATE=${OPTARG} ;;
+    t     ) TO_DATE=${OPTARG} ;;
     h | * ) usage ;;
   esac
 done
@@ -76,12 +82,12 @@ fi
 
 if [ $YEARLY_FLAG -eq 0 -a $MONTHLY_FLAG -eq 0 -a \
      $DAILY_FLAG -eq 0 -a $OVER_FLAG -eq 0 ]; then
-  TOTAL_FLAG=1
+  SUMMARY_FLAG=1
 fi
 
 OPTIONS=""
 
-if [ $TOTAL_FLAG -eq 1 ]; then
+if [ $SUMMARY_FLAG -eq 1 ]; then
   OPTIONS+=" -t"
 fi
 
@@ -118,6 +124,14 @@ function output_sql {
     | perl -pe "s/\n/ /g" \
     | perl -pe "s/select//" \
     | perl -pe "s/;.*$//g" 
+
+  if [ "$FROM_DATE" != "" -a "$TO_DATE" = "" ]; then
+    echo "and t1.date>=\"${FROM_DATE}\""
+  elif [ "$FROM_DATE" = "" -a "$TO_DATE" != "" ]; then
+    echo "and t1.date<=\"${TO_DATE}\""
+  elif [ "$FROM_DATE" != "" -a "$TO_DATE" != "" ]; then
+    echo "and t1.date>=\"${FROM_DATE}\" and t1.date<=\"${TO_DATE}\""
+  fi
 
   echo "
   order by t1.id;
