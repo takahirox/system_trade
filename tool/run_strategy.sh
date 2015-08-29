@@ -110,39 +110,73 @@ fi
 file=$1
 
 function output_sql {
-  echo "
-  select t1.id triger_id,
-         t2.id entry_id,
-         t3.id leave_id,
-         t1.date triger_date,
-         t2.date entry_date,
-         t3.date leave_date,
-         0 is_losscut,
-"
-  cat $1 \
-    | perl -pe "s/^\s*--.*$//g" \
-    | perl -pe "s/\n/ /g" \
-    | perl -pe "s/select//" \
-    | perl -pe "s/;.*$//g" 
 
-  if [ "$FROM_DATE" != "" -a "$TO_DATE" = "" ]; then
-    echo "and t1.date>=\"${FROM_DATE}\""
-  elif [ "$FROM_DATE" = "" -a "$TO_DATE" != "" ]; then
-    echo "and t1.date<=\"${TO_DATE}\""
-  elif [ "$FROM_DATE" != "" -a "$TO_DATE" != "" ]; then
-    echo "and t1.date>=\"${FROM_DATE}\" and t1.date<=\"${TO_DATE}\""
+  table=$(cat $file \
+           | egrep -- '^-- table=' \
+           | cut -d= -f2)
+  entry_from_trigger=$(cat $file \
+                         | egrep -- '^-- entry_from_trigger=' \
+                         | cut -d= -f2)
+  leave_from_entry=$(cat $file \
+                         | egrep -- '^-- leave_from_entry=' \
+                         | cut -d= -f2)
+  entry_time=$(cat $file \
+                 | egrep -- '^-- entry_time=' \
+                 | cut -d= -f2)
+  leave_time=$(cat $file \
+                 | egrep -- '^-- leave_time=' \
+                 | cut -d= -f2)
+  is_buy=$(cat $file \
+             | egrep -- '^-- is_buy=' \
+             | cut -d= -f2)
+
+  echo "
+  select tt1.id trigger_id,
+         tt2.id entry_id,
+         tt3.id leave_id,
+         tt1.date triger_date,
+         tt2.date entry_date,
+         tt3.date leave_date,
+         0 is_losscut,
+         tt1.close trigger_value,
+         tt2.${entry_time} entry_value,
+         tt3.${leave_time} leave_value,
+         ${is_buy} is_buy
+  from (
+    select t.id,
+           t.date
+"
+
+  cat $file | perl -pe "s/^\s*--.*$//g"
+
+  echo "
+  ) tt,
+    ${table} tt1,
+    ${table} tt2,
+    ${table} tt3
+  where tt1.id=tt.id
+    and tt2.id=tt1.id+${entry_from_trigger}
+    and tt3.id=tt2.id+${leave_from_entry}
+  "
+
+  if [ "$FROM_DATE" != "" ]; then
+    echo "and tt1.date>=\"${FROM_DATE}\""
+  fi
+
+  if [ "$TO_DATE" != "" ]; then
+    echo "and tt1.date<=\"${TO_DATE}\""
   fi
 
   echo "
-  order by t1.id;
+  order by tt1.id;
 "
 }
 
-# output_sql $file
+# output_sql # for debug
 
 mysql -u $USER << EOD > .tmp
 use system_trade;
-$(output_sql $file)
+$(output_sql)
 EOD
 
 cat .tmp \
