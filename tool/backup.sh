@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# = check_signals.sh
+# = backup.sh
 #
 # Author::    takahiro
 # Copyright:: takahiro
@@ -9,7 +9,7 @@
 
 # == Version
 #
-# * 2015-08-29 1.00 (takahiro) 
+# * 2015-08-30 1.00 (takahiro) 
 #
 
 # == Summary
@@ -60,15 +60,29 @@
 # HOGE=$1
 #
 
-indir=./strategies/run
+rawdir=./raw_data
+strategydir=./strategies
+backupdir=./backup
 
-if [ ! -e $indir ]; then
-  mkdir -p $indir
-  echo [log] $indir directory was generated.
+if [ ! -e $backupdir ]; then
+  mkdir -p $backupdir
+  echo [log] $backupdir directory was generated.
 fi
 
-for file in $(ls -v ${indir}/*.sql)
-do
-  echo $(basename $file .sql) $(./tool/check_signal.sh $file)
-done
+if [ ! -e $rawdir ]; then
+  echo [log] no $rawdir directory.
+  exit
+fi
+
+if [ ! -e $strategydir ]; then
+  echo [log] no $strategydir directory.
+  exit
+fi
+
+
+filename=${backupdir}/$(date "+%Y%m%d").tgz
+
+tar -cvzf $filename ${rawdir} ${strategydir}
+
+echo [log] $filename was generated.
 
