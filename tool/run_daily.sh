@@ -70,8 +70,8 @@ MAILSUBJECT="$(date) system_trade"
 
 cd $(dirname $0)/..
 
-#./tool/init_data.sh
-#./tool/init.sh
+./tool/init_data.sh
+./tool/init.sh
 
 ./tool/check_signals.sh > .tmp
 echo >> .tmp
