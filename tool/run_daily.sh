@@ -76,6 +76,9 @@ cd $(dirname $0)/..
 ./tool/check_signals.sh > .tmp
 echo >> .tmp
 
+ls -ltrF ./raw_data/*/*/*.csv | tail >> .tmp
+echo >> .tmp
+
 for file in $(find ./raw_data -type f)
 do
   echo $(wc -l < $file) $(basename $file) >> .tmp
