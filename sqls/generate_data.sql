@@ -6,4 +6,15 @@ source ./sqls/generate_data_nk225_future_mini.sql
 source ./sqls/generate_data_nk225_future_mini_with_night.sql
 source ./sqls/generate_data_dji.sql
 source ./sqls/generate_data_usdjpy.sql
-
+source ./sqls/generate_data_nk225_weekly.sql
+source ./sqls/generate_data_nk225_monthly.sql
+source ./sqls/generate_data_nk225_future_mini_weekly.sql
+source ./sqls/generate_data_nk225_future_mini_monthly.sql
+source ./sqls/generate_data_nk225_future_mini_with_night_weekly.sql
+source ./sqls/generate_data_nk225_future_mini_with_night_monthly.sql
+source ./sqls/generate_data_topix_weekly.sql
+source ./sqls/generate_data_topix_monthly.sql
+source ./sqls/generate_data_dji_weekly.sql
+source ./sqls/generate_data_dji_monthly.sql
+source ./sqls/generate_data_usdjpy_weekly.sql
+source ./sqls/generate_data_usdjpy_monthly.sql
