@@ -111,24 +111,7 @@ file=$1
 
 function output_sql {
 
-  table=$(cat $file \
-           | egrep -- '^-- table=' \
-           | cut -d= -f2)
-  entry_from_trigger=$(cat $file \
-                         | egrep -- '^-- entry_from_trigger=' \
-                         | cut -d= -f2)
-  leave_from_entry=$(cat $file \
-                         | egrep -- '^-- leave_from_entry=' \
-                         | cut -d= -f2)
-  entry_time=$(cat $file \
-                 | egrep -- '^-- entry_time=' \
-                 | cut -d= -f2)
-  leave_time=$(cat $file \
-                 | egrep -- '^-- leave_time=' \
-                 | cut -d= -f2)
-  is_buy=$(cat $file \
-             | egrep -- '^-- is_buy=' \
-             | cut -d= -f2)
+  . ./tool/extract_strategy_parameter.sh $file
 
   echo "
   select tt1.id trigger_id,

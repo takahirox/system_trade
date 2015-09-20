@@ -59,13 +59,20 @@ fi
 
 file=$1
 
-table=$(cat $file | egrep -- '^-- table=' | cut -d= -f2)
+. ./tool/extract_strategy_parameter.sh $file
 
-mysql -u $USER << EOD | tail -1
-use system_trade;
-select count(*)
-$(cat $file)
-  and t.id=(select max(id) from ${table})
-;
+function run_query {
+  mysql -u $USER << EOD | tail -1
+  use system_trade;
+  select count(*)
+  $(cat $file)
+    and t.id=(select max(id)-$1 from ${table})
+  ;
 EOD
+}
+
+entry_flag=$(run_query $(($entry_from_trigger-1)))
+leave_flag=$(run_query $(($entry_from_trigger+$leave_from_entry-1)))
+
+echo $entry_flag - $leave_flag
 
