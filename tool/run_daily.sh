@@ -65,7 +65,7 @@ export USER=$(whoami)
 . /home/${USER}/.profile
 
 WAKEUP_AT="14:45" # 06:45 JPT
-MAILTO="fujitv@gachapin.jp"
+MAILTO="hogehoge@hogehoge.jp"
 MAILSUBJECT="$(date) system_trade"
 
 cd $(dirname $0)/..
