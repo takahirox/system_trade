@@ -63,4 +63,6 @@
 ./tool/init_database.sh
 ./tool/init_tables.sh
 ./tool/dapop.sh
+./tool/generate_data.sh
+./tool/generate_adx.sh
 

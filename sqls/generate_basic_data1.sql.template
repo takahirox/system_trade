@@ -1,0 +1,20 @@
+-- generate %%TABLE%% basic data
+insert into %%TABLE%%(date, open, high, low, close)
+select t1.date,
+       t1.open,
+       if(t2.open != 0.0,
+          GREATEST(t1.high, t2.high),
+          t1.high),
+       if(t2.open != 0.0,
+          LEAST(t1.low, t2.low),
+          t1.low),
+       if(t2.open != 0.0,
+          t2.close,
+          t1.close)
+from %%TABLE%%_master t1,
+     %%TABLE%%_master t2
+where t1.date = t2.date
+  and t1.type = 0
+  and t2.type = 1
+order by t1.date;
+

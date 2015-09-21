@@ -1,0 +1,10 @@
+-- generate %%TABLE%% basic data
+insert into %%TABLE%%(date, open, high, low, close)
+select t1.date,
+       t1.open,
+       t1.high,
+       t1.low,
+       t1.close
+from %%TABLE%%_master t1
+order by t1.date;
+

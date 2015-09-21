@@ -1,0 +1,24 @@
+update %%TABLE%% tt1
+  inner join (
+    select t.date date,
+           if(t.DM1 > t.DM2 and t.DM1 > 0, t.DM1, 0) dmp,
+           if(t.DM2 > t.DM1 and t.DM2 > 0, t.DM2, 0) dmn,
+           GREATEST(R1, R2, R3) tr
+    from (
+      select t1.date date,
+             t1.high-t2.high DM1,
+             t2.low-t1.low DM2,
+             abs(t1.high-t1.low) R1,
+             abs(t1.high-t2.close) R2,
+             abs(t2.close-t1.low) R3
+      from %%TABLE%% t1,
+           %%TABLE%% t2
+      where t2.id=t1.id-1
+      order by t1.date
+    ) t
+  ) tt2
+  on tt1.date=tt2.date
+  set tt1.dmp=tt2.dmp,
+      tt1.dmn=tt2.dmn,
+      tt1.tr=tt2.tr
+;

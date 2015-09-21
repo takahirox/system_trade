@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# = init_database.sh
+# = load_csvfile_into_table.sh
 #
 # Author::    takahiro
 # Copyright:: takahiro
@@ -9,7 +9,7 @@
 
 # == Version
 #
-# * 2015-08-12 1.00 (takahiro) 
+# * 2015-09-20 1.00 (takahiro) 
 #
 
 # == Summary
@@ -34,12 +34,12 @@
 #
 
 
-# function usage { 
-#   echo "usage : $0 <HOGE>"
-#   echo "ex ) $0 HOGE"
-#   exit
-# }
-#
+function usage { 
+  echo "usage : $0 <filename> <tablename>"
+  echo "ex ) $0 nk225_daily.csv nk225_daily_table"
+  exit
+}
+
 
 # while getopts "abd:h" options
 # do
@@ -53,13 +53,17 @@
 #
 
 
-# if [ $# -ne 1 ]; then
-#   usage
-# fi
-#
-# HOGE=$1
-#
+if [ $# -ne 2 ]; then
+  usage
+fi
 
-mysql -u root < ./sqls/create_database.sql
-perl -pe "s/%%USER%%/$USER/g" ./sqls/create_user.sql.template | mysql -u root
+FILE=$1
+TABLE=$2
+
+mysql -u $USER --local-infile << EOD
+  use system_trade;
+  load data local
+    infile '$FILE' into table $TABLE
+    columns terminated by ',';
+EOD
 

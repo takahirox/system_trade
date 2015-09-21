@@ -1,0 +1,37 @@
+drop table if exists %%TABLE%%;
+create table %%TABLE%% (
+  date date,
+--  time time,
+  open float(7,2),
+  high float(7,2),
+  low float(7,2),
+  close float(7,2),
+  volume int,
+  trading_value int,
+  id int,
+  change_price float(7,2),
+  change_percentage float(5,2),
+  candle float(7,2),
+  top_beard float(7,2),
+  bottom_beard float(7,2),
+  ma5 float(7,2),
+  ma5_change float(7,2),
+  ma10 float(7,2),
+  ma10_change float(7,2),
+  ma25 float(7,2),
+  ma25_change float(7,2),
+  ma75 float(7,2),
+  ma75_change float(7,2),
+  dmp float(7,2),
+  dmn float(7,2),
+  tr float(7,2),
+  admp float(7,2),
+  admn float(7,2),
+  atr float(7,2),
+  dip float(5,2),
+  din float(5,2),
+  dx float(5,2),
+  adx float(5,2)
+);
+describe %%TABLE%%;
+

@@ -1,0 +1,9 @@
+delete from mysql.user where User='%%USER%%';
+insert into mysql.user (User, Host, Password)
+  values('%%USER%%', 'localhost', '');
+flush privileges;
+select User, Host, Password from mysql.user;
+grant all privileges on system_trade.* to %%USER%%@localhost;
+flush privileges;
+show grants for '%%USER%%'@'localhost';
+

@@ -1,0 +1,16 @@
+-- generate %%TABLE%% basic data from %%TABLE2%%
+insert into %%TABLE%%(date, open, high, low, close)
+select min(t.date) date,
+       (select t2.open
+        from %%TABLE2%% t2
+        where t2.date=min(t.date)) open,
+       max(t.high) high,
+       min(t.low) low,
+       (select t2.close
+        from %%TABLE2%% t2
+        where t2.date=max(t.date)) close
+from %%TABLE2%% t
+group by YEAR(t.date),
+         MONTH(t.date)
+order by t.date;
+

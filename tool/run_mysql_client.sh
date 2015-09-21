@@ -61,6 +61,6 @@
 #
 
 mysql -u root -p
-#mysql -u takahiro -p
-#mysql -u takahiro -p < something.sql
+#mysql -u $USER -p
+#mysql -u $USER -p < something.sql
 

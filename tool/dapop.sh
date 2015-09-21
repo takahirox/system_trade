@@ -2,7 +2,7 @@
 
 # = dapop.sh
 #
-# Author::    takahiro
+# Author::    $USER
 # Copyright:: takahiro
 # License::   GPL
 #
@@ -67,124 +67,28 @@ nk225_future_mini_indir=./csv_data/nk225_future_mini
 dji_indir=./csv_data/dji
 usdjpy_indir=./csv_data/usdjpy
 
-echo [log] nk225 daily load start.
-for file in $(ls ${nk225_indir}/daily/*.csv)
-do
-  echo [log] $file load start.
-  mysql -u takahiro --local-infile << EOD
+
+function run_query {
+  echo [log] ${1} load start.
+  for file in $(ls ${2}/*.csv)
+  do
+    echo [log] $file load start.
+    ./tool/load_csvfile_into_table.sh $file ${1}_master
+    echo [log] $file load end.
+  done
+  echo [log] ${1} load end.
+
+  mysql -u $USER << EOD
     use system_trade;
-    load data local
-      infile '$file' into table nk225_daily_master
-      columns terminated by ',';
+    select count(*) from ${1}_master;
 EOD
-  echo [log] $file load end.
-done
-echo [log] nk225 daily load end.
-
-mysql -u takahiro << EOD
-  use system_trade;
-  select count(*) from nk225_daily_master;
-EOD
+}
 
 
-echo [log] topix daily load start.
-for file in $(ls ${topix_indir}/daily/*.csv)
-do
-  echo [log] $file load start.
-  mysql -u takahiro --local-infile << EOD
-    use system_trade;
-    load data local
-      infile '$file' into table topix_daily_master
-      columns terminated by ',';
-EOD
-  echo [log] $file load end.
-done
-echo [log] topix daily load end.
+run_query nk225_daily ${nk225_indir}/daily
+run_query topix_daily ${topix_indir}/daily
+run_query nk225_future_mini_daily ${nk225_future_mini_indir}/daily
+run_query nk225_future_mini_minutely ${nk225_future_mini_indir}/minutely
+run_query dji_daily ${dji_indir}/daily
+run_query usdjpy_daily ${usdjpy_indir}/daily
 
-mysql -u takahiro << EOD
-  use system_trade;
-  select count(*) from topix_daily_master;
-EOD
-
-
-echo [log] nk225 future mini daily load start.
-for file in $(ls ${nk225_future_mini_indir}/daily/*.csv)
-do
-  echo [log] $file load start.
-  mysql -u takahiro --local-infile << EOD
-    use system_trade;
-    load data local
-      infile '$file' into table nk225_future_mini_daily_master
-      columns terminated by ',';
-EOD
-  echo [log] $file load end.
-done
-echo [log] nk225 future mini daily load end.
-
-mysql -u takahiro << EOD
-  use system_trade;
-  select count(*) from nk225_future_mini_daily_master;
-EOD
-
-
-echo [log] nk225 future mini minitely load start.
-for file in $(ls ${nk225_future_mini_indir}/minutely/*.csv)
-do
-  echo [log] $file load start.
-  mysql -u takahiro --local-infile << EOD
-    use system_trade;
-    load data local
-      infile '$file' into table nk225_future_mini_minutely
-      columns terminated by ',';
-EOD
-  echo [log] $file load end.
-done
-echo [log] nk225 future mini minitely load end.
-
-mysql -u takahiro << EOD
-  use system_trade;
-  select count(*) from nk225_future_mini_minutely;
-EOD
-
-
-echo [log] dji daily load start.
-for file in $(ls ${dji_indir}/daily/*.csv)
-do
-  echo [log] $file load start.
-  mysql -u takahiro --local-infile << EOD
-    use system_trade;
-    load data local
-      infile '$file' into table dji_daily_master
-      columns terminated by ',';
-EOD
-  echo [log] $file load end.
-done
-echo [log] dji daily load end.
-
-mysql -u takahiro << EOD
-  use system_trade;
-  select count(*) from dji_daily_master;
-EOD
-
-
-echo [log] usdjpy daily load start.
-for file in $(ls ${usdjpy_indir}/daily/*.csv)
-do
-  echo [log] $file load start.
-  mysql -u takahiro --local-infile << EOD
-    use system_trade;
-    load data local
-      infile '$file' into table usdjpy_daily_master
-      columns terminated by ',';
-EOD
-  echo [log] $file load end.
-done
-echo [log] usdjpy daily load end.
-
-mysql -u takahiro << EOD
-  use system_trade;
-  select count(*) from usdjpy_daily_master;
-EOD
-
-
-mysql -u takahiro < ./sqls/generate_data.sql
