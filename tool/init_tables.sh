@@ -60,8 +60,6 @@
 # HOGE=$1
 #
 
-mysql -u $USER < ./sqls/create_master_tables.sql
-
 function run_query {
   mysql -u $USER <<EOD
     use system_trade;

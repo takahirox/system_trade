@@ -5,6 +5,16 @@ select t1.date,
        t1.high,
        t1.low,
        t1.close
-from %%TABLE%%_master t1
+from (select *
+      from %%TABLE%%_master
+      where date > (
+              select if(
+                       max(date) is NULL,
+                       0,
+                       max(date)
+                     )
+              from %%TABLE%%
+            )
+     ) t1
 order by t1.date;
 

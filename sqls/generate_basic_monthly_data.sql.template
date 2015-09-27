@@ -1,16 +1,71 @@
 -- generate %%TABLE%% basic data from %%TABLE2%%
-insert into %%TABLE%%(date, open, high, low, close)
-select min(t.date) date,
-       (select t2.open
-        from %%TABLE2%% t2
-        where t2.date=min(t.date)) open,
-       max(t.high) high,
-       min(t.low) low,
-       (select t2.close
-        from %%TABLE2%% t2
-        where t2.date=max(t.date)) close
+insert into %%TABLE%%(date)
+select min(t.date) date
 from %%TABLE2%% t
+where YEAR(date)*100+MONTH(date) > (
+        select if(
+                 max(date) is NULL,
+                 0,
+                 YEAR(max(date))*100+
+                   MONTH(max(date))
+               )
+        from %%TABLE%%
+      )
 group by YEAR(t.date),
          MONTH(t.date)
-order by t.date;
+order by YEAR(t.date),
+         MONTH(t.date);
+
+update %%TABLE%% t3
+  inner join (
+    select min(t.date) date,
+           max(t.date) last_date,
+           (select t2.open
+            from %%TABLE2%% t2
+            where t2.date=min(t.date)) open,
+           max(t.high) high,
+           min(t.low) low,
+           (select t2.close
+            from %%TABLE2%% t2
+            where t2.date=max(t.date)) close
+    from (
+           select *
+           from %%TABLE2%%
+           where YEAR(date)*100+MONTH(date) > (
+                   select if(
+                            max(date) is NULL,
+                            0,
+                            YEAR(max(date))*100+MONTH(max(date))
+                          )
+                   from %%TABLE%%
+                 )
+              or YEAR(date)*100+MONTH(date) in (
+                   select YEAR(tt.date)*100+MONTH(tt.date)
+                   from %%TABLE%% tt,
+                        (
+                          select min(date) date,
+                                 max(date) last_date
+                          from %%TABLE2%%
+                          group by YEAR(date),
+                                   MONTH(date)
+                          order by YEAR(date),
+                                   MONTH(date)
+                        ) tt2
+                   where tt.date=tt2.date
+                     and (tt.last_date!=tt2.last_date
+                            or tt.last_date is NULL)
+                 )
+         ) t
+    group by YEAR(t.date),
+             MONTH(t.date)
+    order by YEAR(t.date),
+             MONTH(t.date)
+  ) t4
+  on t3.date=t4.date
+  set t3.last_date=t4.last_date,
+      t3.open=t4.open,
+      t3.high=t4.high,
+      t3.low=t4.low,
+      t3.close=t4.close;
+
 

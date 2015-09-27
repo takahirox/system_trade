@@ -18,8 +18,28 @@ select t1.date,
        if(t2.open != 0.0,
           t1.trading_value+t2.trading_value,
           t1.trading_value)
-from %%TABLE%%_master t1,
-     %%TABLE%%_master t2
+from (select * 
+      from %%TABLE%%_master
+      where date > (
+              select if(
+                       max(date) is NULL,
+                       0,
+                       max(date)
+                     )
+              from %%TABLE%%
+            )
+     ) t1,
+     (select * 
+      from %%TABLE%%_master
+      where date > (
+              select if(
+                       max(date) is NULL,
+                       0,
+                       max(date)
+                     )
+              from %%TABLE%%
+            )
+     ) t2
 where t1.date = t2.date
   and t1.type = 0
   and t2.type = 1

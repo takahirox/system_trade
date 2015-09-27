@@ -1,17 +1,27 @@
 -- generate %%TABLE2%% data
-alter table %%TABLE2%%_master add daily_id int;
-
 update %%TABLE2%%_master t1
   inner join (
-    select t.date date,
-           @n:=@n+1 id
+    select tt.*
     from (
-      select distinct date
-      from %%TABLE2%%_master
-      order by date
-    ) t,
-         (select @n:=0) dmy
-    order by t.date
+      select t.date date,
+             @n:=@n+1 id
+      from (
+             select distinct date
+             from %%TABLE2%%_master
+             order by date
+           ) t,
+           (select @n:=0) dmy
+      order by t.date
+    ) tt
+    where tt.date > (
+            select if(
+                     max(date) is NULL,
+                     0,
+                     max(date)
+                   )
+            from %%TABLE2%%_master
+            where daily_id is not NULL
+          )
   ) t2
   on t1.date=t2.date
   set t1.daily_id=t2.id;
@@ -65,16 +75,50 @@ select t1.date,
             )
           )
        )
-from %%TABLE2%%_master t1,
-     %%TABLE2%%_master t2,
-     %%TABLE2%%_master t3
+from (
+       select *
+       from %%TABLE2%%_master
+       where date > (
+               select if(
+                        max(date) is NULL,
+                        0,
+                        max(date)
+                      )
+               from %%TABLE%%
+             )
+     ) t1,
+     (
+       select *
+       from %%TABLE2%%_master
+       where date > (
+               select if(
+                        max(date) is NULL,
+                        0,
+                        max(date)
+                      )
+               from %%TABLE%%
+             )
+     ) t2,
+     (
+       select *
+       from %%TABLE2%%_master
+       where daily_id >= (
+               select if(
+                        max(daily_id) is NULL,
+                        0,
+                        max(daily_id)
+                      )
+               from %%TABLE2%%_master
+               where date = (
+                 select max(date)
+                 from %%TABLE%%
+               )
+             )
+     ) t3
 where t1.date = t2.date
   and t1.daily_id = t3.daily_id+1
   and t1.type = 0
   and t2.type = 1
   and t3.type = 2
 order by t1.date;
-
-alter table %%TABLE2%%_master drop column daily_id;
-
 

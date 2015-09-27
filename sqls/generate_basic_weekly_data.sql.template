@@ -1,15 +1,63 @@
 -- generate %%TABLE%% basic data from %%TABLE2%%
-insert into %%TABLE%%(date, open, high, low, close)
-select min(t.date) date,
-       (select t2.open
-        from %%TABLE2%% t2
-        where t2.date=min(t.date)) open,
-       max(t.high) high,
-       min(t.low) low,
-       (select t2.close
-        from %%TABLE2%% t2
-        where t2.date=max(t.date)) close
+insert into %%TABLE%%(date)
+select min(t.date) date
 from %%TABLE2%% t
+where YEARWEEK(t.date) > (
+        select if(
+                 max(date) is NULL,
+                 0,
+                 max(YEARWEEK(date))
+               )
+        from %%TABLE%%
+      )
 group by YEARWEEK(t.date)
-order by t.date;
+order by YEARWEEK(t.date);
+
+update %%TABLE%% t3
+  inner join (
+    select min(t.date) date,
+           max(t.date) last_date,
+           (select t2.open
+            from %%TABLE2%% t2
+            where t2.date=min(t.date)) open,
+           max(t.high) high,
+           min(t.low) low,
+           (select t2.close
+            from %%TABLE2%% t2
+            where t2.date=max(t.date)) close
+    from (
+           select *
+           from %%TABLE2%%
+           where YEARWEEK(date) > (
+                   select if(
+                            max(date) is NULL,
+                            0,
+                            YEARWEEK(max(date))
+                          )
+                   from %%TABLE%%
+                 )
+              or YEARWEEK(date) in (
+                   select YEARWEEK(tt.date)
+                   from %%TABLE%% tt,
+                        (
+                          select min(date) date,
+                                 max(date) last_date
+                          from %%TABLE2%%
+                          group by YEARWEEK(date)
+                          order by YEARWEEK(date)
+                        ) tt2
+                   where tt.date=tt2.date
+                     and (tt.last_date!=tt2.last_date
+                            or tt.last_date is NULL)
+                 )
+         ) t
+    group by YEARWEEK(t.date)
+    order by YEARWEEK(t.date)
+  ) t4
+  on t3.date=t4.date
+  set t3.last_date=t4.last_date,
+      t3.open=t4.open,
+      t3.high=t4.high,
+      t3.low=t4.low,
+      t3.close=t4.close;
 

@@ -34,23 +34,28 @@
 #
 
 
-# function usage { 
-#   echo "usage : $0 <HOGE>"
-#   echo "ex ) $0 HOGE"
-#   exit
-# }
-#
+function usage { 
+  echo "usage : $0 [options]"
+  echo
+  echo "options :"
+  echo "  -u update"
+  echo "  -h show this help"
+  echo
+  echo "ex ) $0 -u"
+  exit
+}
 
-# while getopts "abd:h" options
-# do
-#   case $options in
-#     a | b ) ;;
-#     d     ) OPTDATA=${OPTARG} ;;
-#     h | * ) usage ;;
-#   esac
-# done
-# shift $(($OPTIND - 1))
-#
+
+UPDATE_OPTIONS=""
+while getopts "uh" options
+do
+  case $options in
+    u     ) UPDATE_OPTIONS=" -u " ;;
+    h | * ) usage ;;
+  esac
+done
+shift $(($OPTIND - 1))
+
 
 
 # if [ $# -ne 1 ]; then
@@ -71,7 +76,7 @@ MAILSUBJECT="$(date) system_trade"
 cd $(dirname $0)/..
 
 ./tool/init_data.sh
-./tool/init.sh
+./tool/init.sh $UPDATE_OPTIONS
 
 ./tool/check_signals.sh > .tmp
 echo >> .tmp

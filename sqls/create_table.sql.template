@@ -9,6 +9,7 @@ create table %%TABLE%% (
   volume int,
   trading_value int,
   id int,
+  last_date date,
   change_price float(7,2),
   change_percentage float(5,2),
   candle float(7,2),

@@ -1,11 +1,23 @@
 -- generate %%TABLE%% id
 update %%TABLE%% t1
   inner join (
-    select t.date date,
-           @n:=@n+1 id
-    from %%TABLE%% t,
-         (select @n:=0) dmy
-    order by t.date
+    select tt.*
+    from (
+      select t.date date,
+             @n:=@n+1 id
+      from %%TABLE%% t,
+           (select @n:=0) dmy
+      order by t.date
+    ) tt
+    where tt.date>(
+            select if(
+                     max(date) is NULL,
+                     0,
+                     max(date)
+                   )
+            from %%TABLE%%
+            where id is not NULL
+          )
   ) t2
   on t1.date=t2.date
   set t1.id=t2.id;
@@ -20,6 +32,7 @@ update %%TABLE%% t3
     from %%TABLE%% t1,
          %%TABLE%% t2
     where t1.id=t2.id+1
+      and t1.change_price is NULL
   ) t4
   on t3.date=t4.date
   set t3.change_price=t4.change_price,
@@ -34,24 +47,13 @@ update %%TABLE%% t1
            high-GREATEST(open, close) top_beard,
            LEAST(open, close)-low bottom_beard
     from %%TABLE%%
+    where candle is NULL
     order by date
   ) t2
   on t1.date=t2.date
   set t1.candle=t2.candle,
       t1.top_beard=t2.top_beard,
       t1.bottom_beard=t2.bottom_beard;
-
-
--- generate %%TABLE%% beard
-update %%TABLE%% t1
-  inner join (
-    select date date,
-           close-open candle
-    from %%TABLE%%
-    order by date
-  ) t2
-  on t1.date=t2.date
-  set t1.candle=t2.candle;
 
 
 -- generate %%TABLE%% ma
@@ -62,6 +64,7 @@ update %%TABLE%% t3
     from %%TABLE%% t1,
          %%TABLE%% t2
     where t2.id between t1.id-4 and t1.id
+      and t1.ma5 is NULL
     group by t1.date
   ) t4
   on t3.date=t4.date
@@ -74,6 +77,7 @@ update %%TABLE%% t3
     from %%TABLE%% t1,
          %%TABLE%% t2
     where t2.id between t1.id-9 and t1.id
+      and t1.ma10 is NULL
     group by t1.date
   ) t4
   on t3.date=t4.date
@@ -86,6 +90,7 @@ update %%TABLE%% t3
     from %%TABLE%% t1,
          %%TABLE%% t2
     where t2.id between t1.id-24 and t1.id
+      and t1.ma25 is NULL
     group by t1.date
   ) t4
   on t3.date=t4.date
@@ -98,6 +103,7 @@ update %%TABLE%% t3
     from %%TABLE%% t1,
          %%TABLE%% t2
     where t2.id between t1.id-74 and t1.id
+      and t1.ma75 is NULL
     group by t1.date
   ) t4
   on t3.date=t4.date
@@ -113,6 +119,7 @@ update %%TABLE%% t3
     from %%TABLE%% t1,
          %%TABLE%% t2
     where t1.id=t2.id+1
+      and t1.ma5_change is NULL
   ) t4
   on t3.date=t4.date
   set t3.ma5_change=t4.ma5_change,

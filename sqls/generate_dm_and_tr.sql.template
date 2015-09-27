@@ -14,6 +14,7 @@ update %%TABLE%% tt1
       from %%TABLE%% t1,
            %%TABLE%% t2
       where t2.id=t1.id-1
+        and t1.dmp is NULL
       order by t1.date
     ) t
   ) tt2

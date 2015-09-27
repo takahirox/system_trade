@@ -103,6 +103,15 @@ EOD
         select t.id id,
                t.val val
         from $TMP_TABLE t
+        where t.id>(
+                select if(
+                         max(id) is NULL,
+                         0,
+                         max(id)
+                       )
+                from $table
+                where $acol is not NULL
+              )
         order by t.id
       ) t2
       on t1.id=t2.id
@@ -139,6 +148,7 @@ EOD
                t.admp/t.atr*100 dip,
                t.admn/t.atr*100 din
         from $table t
+        where t.dip is NULL
         order by t.id
       ) t2
       on t1.id=t2.id
