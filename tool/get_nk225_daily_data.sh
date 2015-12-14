@@ -64,7 +64,7 @@ outdir=./raw_data/nk225/daily
 logdir=./log/nk225/daily
 url='http://k-db.com/indices/I101/a'
 start=2007
-end=2015
+end=$(date "+%Y")
 sleep_sec=3
 file_prefix=$(basename $0 .sh)
 

@@ -64,7 +64,7 @@ outdir=./raw_data/topix/daily
 logdir=./log/topix/daily
 url='http://k-db.com/indices/I102/a'
 start=2007
-end=2015
+end=$(date "+%Y")
 sleep_sec=3
 file_prefix=$(basename $0 .sh)
 
