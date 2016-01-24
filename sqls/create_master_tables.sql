@@ -74,6 +74,17 @@ create table dji_daily_master (
 describe dji_daily_master;
 
 
+drop table if exists dji_future_mini_daily_master;
+create table dji_future_mini_daily_master (
+  date date,
+  open float(7,2),
+  high float(7,2),
+  low float(7,2),
+  close float(7,2)
+);
+describe dji_future_mini_daily_master;
+
+
 drop table if exists usdjpy_daily_master;
 create table usdjpy_daily_master (
   date date,

@@ -61,6 +61,7 @@
 #
 
 ./tool/init_dji_daily_data.sh
+./tool/init_dji_future_mini_daily_data.sh
 ./tool/init_nk225_daily_data.sh
 ./tool/init_nk225_future_mini_daily_data.sh
 ./tool/init_nk225_future_mini_minutely_data.sh

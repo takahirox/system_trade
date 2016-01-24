@@ -93,7 +93,7 @@ do
     template_file=./sqls/generate_basic_data1.sql.template
     table1=$table
     table2=""
-  elif [ "$table" = "dji_daily" -o "$table" = "usdjpy_daily" ]; then
+  elif [ "$table" = "dji_daily" -o "$table" = "dji_future_mini_daily" -o "$table" = "usdjpy_daily" ]; then
     template_file=./sqls/generate_basic_data2.sql.template
     table1=$table
     table2=""

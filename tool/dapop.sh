@@ -65,6 +65,7 @@ nk225_indir=./csv_data/nk225
 topix_indir=./csv_data/topix
 nk225_future_mini_indir=./csv_data/nk225_future_mini
 dji_indir=./csv_data/dji
+dji_future_mini_indir=./csv_data/dji_future_mini
 usdjpy_indir=./csv_data/usdjpy
 
 
@@ -90,5 +91,6 @@ run_query topix_daily ${topix_indir}/daily
 run_query nk225_future_mini_daily ${nk225_future_mini_indir}/daily
 run_query nk225_future_mini_minutely ${nk225_future_mini_indir}/minutely
 run_query dji_daily ${dji_indir}/daily
+run_query dji_future_mini_daily ${dji_future_mini_indir}/daily
 run_query usdjpy_daily ${usdjpy_indir}/daily
 
