@@ -53,31 +53,64 @@ function usage {
 #
 
 
-if [ $# -ne 1 ]; then
+if [ $# -lt 1 ]; then
   usage
 fi
 
-file=$1
 datdir=./chart
-datfile=${datdir}/$(basename $file .sql)_equity.dat
-imgfile=${datdir}/$(basename $file .sql)_equity.png
 
 if [ ! -e $datdir ]; then
   mkdir -p $datdir
   echo [log] $datdir directory was generated.
 fi
 
-./tool/run_strategy.sh -o $file > $datfile
+function get_datfile_name {
+  echo ${datdir}/$(basename $file .sql)_equity.dat
+}
 
-gnuplot -p << EOD
-set xtics rotate by 270
-set xdata time
-set timefmt "%Y-%m-%d"
-set datafile separator "\t"
-set term png
-set output "${imgfile}"
-plot "${datfile}" u 1:3 w l
-set output
-EOD
+function get_imgfile_name {
+  echo ${datdir}/$(basename $file .sql)_equity.png
+}
 
-display $imgfile &
+function make_one_chart {
+  file=$1
+  flag=$2
+  
+  datfile=$(get_datfile_name $file)
+  imgfile=$(get_imgfile_name $file)
+
+  ./tool/run_strategy.sh -o $file | ./tool/tidy_dat.py > $datfile
+
+  if [ $flag -eq 1 ]; then
+    ./tool/make_equity_chart.sh $datfile $imgfile
+  fi
+}
+
+if [ $# -eq 1 ]; then
+  file=$1
+  make_one_chart $file 1
+else
+  for file in $@
+  do
+    echo [log] making $file data
+    make_one_chart $file 0
+  done
+
+  datfile=${datdir}/combine_equity.dat
+  imgfile=${datdir}/combine_equity.png
+
+  filenames=''
+
+  echo -n > $datfile
+
+  for file in $@
+  do
+    filenames+="$(get_datfile_name $file) "
+  done
+
+  cat $filenames | ./tool/tidy_dat.py > $datfile
+
+  ./tool/make_equity_chart.sh $datfile $imgfile
+
+fi
+
