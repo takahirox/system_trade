@@ -62,7 +62,7 @@
 
 outdir=./raw_data/nk225_future_mini/daily
 logdir=./log/nk225_future_mini/daily
-url='http://k-db.com/futures/F101-0000/a'
+url='http://k-db.com/futures/F102-0000/a'
 start=2007
 end=$(date "+%Y")
 sleep_sec=3
