@@ -80,7 +80,8 @@ if [ ! -e $logdir ]; then
 fi
 
 echo [log] load $file_prefix
-wget -o $logdir/${file_prefix}.log \
+wget --user-agent="" \
+     -o $logdir/${file_prefix}.log \
      -O $outdir/${file_prefix}.csv \
      ${url} \
      --post-data="${post_data}"

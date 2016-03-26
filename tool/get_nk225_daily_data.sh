@@ -81,7 +81,8 @@ fi
 for y in $(seq $start $end)
 do
   echo [log] load $file_prefix $y
-  wget -o $logdir/${file_prefix}_${y}.log \
+  wget --user-agent="" \
+       -o $logdir/${file_prefix}_${y}.log \
        -O $outdir/${file_prefix}_${y}.csv \
        ${url}\?year=${y}\&download=csv
   echo [log] load $file_prefix $y done

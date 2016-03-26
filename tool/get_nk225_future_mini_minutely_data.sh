@@ -77,7 +77,7 @@ fi
 
 echo [log] $file_prefix $d start.
 
-wget -o .tmp_log -O .tmp_file $url\?download=csv
+wget --user-agent="" -o .tmp_log -O .tmp_file $url\?download=csv
 d=$(iconv -f SHIFT-JIS -t UTF-8 .tmp_file | tail -1 | cut -d, -f1)
 
 mv .tmp_log ${logdir}/${file_prefix}_${d}.log
