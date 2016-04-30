@@ -11,6 +11,7 @@ __version__ = '2016-02-06 1.00 (takahiro)'
 import sys
 #import optparse
 import re
+import datetime
 
 #usage = "%prog [options] [filename]"
 #parser = optparse.OptionParser(usage=usage)
@@ -43,6 +44,7 @@ win_r = 0
 lose_r = 0
 pre_date = None
 value = 0
+datas = []
 for line in lines:
   d = line[0]
   v = float(line[1])
@@ -54,6 +56,16 @@ for line in lines:
     sum += value
     if sum > max_sum:
       max_sum = sum
+
+    dd = 0
+    for data in datas:
+      if d == data[0]:
+        break
+      if float(data[1]) >= sum:
+        d1 = datetime.datetime.strptime(pre_date, '%Y-%m-%d')
+        d2 = datetime.datetime.strptime(data[0], '%Y-%m-%d')
+        dd = (d1 - d2).days
+        break
 
     drawdown = -(max_sum - sum)
     if drawdown  < max_drawdown:
@@ -73,7 +85,8 @@ for line in lines:
       max_lose_r = lose_r
 
     if pre_date != None:
-      print '%s\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%d\t%d' % (pre_date, value, sum, max_sum, drawdown, max_drawdown, max_win_r, max_lose_r)
+      print '%s\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%d\t%d\t%d' % (pre_date, value, sum, max_sum, drawdown, max_drawdown, max_win_r, max_lose_r, dd)
+      datas.append([pre_date, sum])
     value = v
 
   pre_date = d
