@@ -3,21 +3,11 @@ insert into %%TABLE%%(date, open, high, low, close,
                       volume, trading_value)
 select t1.date,
        t1.open,
-       if(t2.open != 0.0,
-          GREATEST(t1.high, t2.high),
-          t1.high),
-       if(t2.open != 0.0,
-          LEAST(t1.low, t2.low),
-          t1.low),
-       if(t2.open != 0.0,
-          t2.close,
-          t1.close),
-       if(t2.open != 0.0,
-          t1.volume+t2.volume,
-          t1.volume),
-       if(t2.open != 0.0,
-          t1.trading_value+t2.trading_value,
-          t1.trading_value)
+       t1.high,
+       t1.low,
+       t1.close,
+       t1.volume,
+       t1.trading_value
 from (select * 
       from %%TABLE%%_master
       where date > (
@@ -28,20 +18,7 @@ from (select *
                      )
               from %%TABLE%%
             )
-     ) t1,
-     (select * 
-      from %%TABLE%%_master
-      where date > (
-              select if(
-                       max(date) is NULL,
-                       0,
-                       max(date)
-                     )
-              from %%TABLE%%
-            )
-     ) t2
-where t1.date = t2.date
-  and t1.type = 0
-  and t2.type = 1
+     ) t1
+where t1.type = 0
 order by t1.date;
 

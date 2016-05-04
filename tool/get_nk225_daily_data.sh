@@ -62,10 +62,10 @@
 
 outdir=./raw_data/nk225/daily
 logdir=./log/nk225/daily
-url='http://k-db.com/indices/I101/a'
+url='http://k-db.com/indices/I101/4h'
 start=2007
 end=$(date "+%Y")
-sleep_sec=3
+sleep_sec=5
 file_prefix=$(basename $0 .sh)
 
 if [ ! -e $outdir ]; then
@@ -84,7 +84,7 @@ do
   wget --user-agent="" \
        -o $logdir/${file_prefix}_${y}.log \
        -O $outdir/${file_prefix}_${y}.csv \
-       ${url}\?year=${y}\&download=csv
+       ${url}/${y}\?download=csv
   echo [log] load $file_prefix $y done
   if [ "$y" -ne "$end" ]; then
     echo [log] sleep $sleep_sec sec for the server.

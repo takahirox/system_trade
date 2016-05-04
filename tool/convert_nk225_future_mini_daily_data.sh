@@ -77,9 +77,8 @@ for file in $(ls $indir/*.csv)
 do
   out_file=$(basename $file .csv)
   iconv -f SHIFT-JIS -t UTF-8 $file \
-    | perl -pe "s/午前/0/g" \
-    | perl -pe "s/午後/1/g" \
-    | perl -pe "s/夜間/2/g" \
+    | perl -pe "s/日中/0/g" \
+    | perl -pe "s/夜間/1/g" \
     | sed -e "1,2d" \
     > ${outdir}/${out_file}.csv
   echo [log] ${outdir}/${out_file}.csv was generated.

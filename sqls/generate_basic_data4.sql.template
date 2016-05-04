@@ -29,50 +29,38 @@ update %%TABLE2%%_master t1
 insert into %%TABLE%%(date, open, high, low, close,
                       volume, trading_value)
 select t1.date,
-       if(t3.open != 0.0,
-          t3.open,
-          t1.open),
-       if(t2.open != 0.0 and t3.open != 0.0,
-          GREATEST(t1.high, t2.high, t3.high),
-          if(t2.open = 0.0 and t3.open != 0.0,
-            GREATEST(t1.high, t3.high),
-            if(t2.open != 0.0 and t3.open = 0.0,
-               GREATEST(t1.high, t2.high),
-               t1.high
-            )
-          )
-       ),
-       if(t2.open != 0.0 and t3.open != 0.0,
-          LEAST(t1.low, t2.low, t3.low),
-          if(t2.open = 0.0 and t3.open != 0.0,
-            LEAST(t1.low, t3.low),
-            if(t2.open != 0.0 and t3.open = 0.0,
-               LEAST(t1.low, t2.low),
-               t1.low
-            )
-          )
-       ),
        if(t2.open != 0.0,
-          t2.close,
-          t1.close),
-       if(t2.open != 0.0 and t3.open != 0.0,
-          t1.volume+t2.volume+t3.volume,
-          if(t2.open = 0.0 and t3.open != 0.0,
-            t1.volume+t3.volume,
-            if(t2.open != 0.0 and t3.open = 0.0,
-               t1.volume+t2.volume,
-               t1.volume
-            )
+          t2.open,
+          t1.open),
+       if(t1.open = 0.0 and t2.open != 0.0,
+          t2.high,
+          if(t1.open != 0.0 and t2.open,
+             t1.high,
+             GREATEST(t1.high, t2.high)
           )
        ),
-       if(t2.open != 0.0 and t3.open != 0.0,
-          t1.trading_value+t2.trading_value+t3.trading_value,
-          if(t2.open = 0.0 and t3.open != 0.0,
-            t1.trading_value+t3.trading_value,
-            if(t2.open != 0.0 and t3.open = 0.0,
-               t1.trading_value+t2.trading_value,
-               t1.trading_value
-            )
+       if(t1.open = 0.0 and t2.open != 0.0,
+          t2.low,
+          if(t1.open != 0.0 and t2.open = 0.0,
+             t1.low,
+             LEAST(t1.low, t2.low)
+          )
+       ),
+       if(t1.open != 0.0,
+          t1.close,
+          t2.close),
+       if(t1.open = 0.0 and t2.open != 0.0,
+          t2.volume,
+          if(t1.open != 0.0 and t2.open = 0.0,
+             t1.volume,
+             t1.volume+t2.volume
+          )
+       ),
+       if(t1.open = 0.0 and t2.open != 0.0,
+          t2.trading_value,
+          if(t1.open != 0.0 and t2.open = 0.0,
+             t1.trading_value,
+             t1.trading_value+t2.trading_value
           )
        )
 from (
@@ -90,18 +78,6 @@ from (
      (
        select *
        from %%TABLE2%%_master
-       where date > (
-               select if(
-                        max(date) is NULL,
-                        0,
-                        max(date)
-                      )
-               from %%TABLE%%
-             )
-     ) t2,
-     (
-       select *
-       from %%TABLE2%%_master
        where daily_id >= (
                select if(
                         max(daily_id) is NULL,
@@ -114,11 +90,9 @@ from (
                  from %%TABLE%%
                )
              )
-     ) t3
-where t1.date = t2.date
-  and t1.daily_id = t3.daily_id+1
+     ) t2
+where t1.daily_id = t2.daily_id+1
   and t1.type = 0
   and t2.type = 1
-  and t3.type = 2
 order by t1.date;
 

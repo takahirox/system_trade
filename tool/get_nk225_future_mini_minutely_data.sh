@@ -62,7 +62,7 @@
 
 outdir=./raw_data/nk225_future_mini/minutely
 logdir=./log/nk225_future_mini/minutely
-url="http://k-db.com/futures/F102-0001/minutely"
+url="http://k-db.com/futures/F102-0000/5m"
 file_prefix=$(basename $0 .sh)
 
 if [ ! -e $outdir ]; then
