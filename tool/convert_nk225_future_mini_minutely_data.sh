@@ -77,7 +77,7 @@ for file in $(ls ${indir}/*.csv)
 do
   outfile=$(basename $file)
   iconv -f SHIFT-JIS -t UTF-8 $file \
-    | sed -e "1,2d" \
+    | sed -e "1,1d" \
     > ${outdir}/${outfile}
   echo [log] ${outdir}/${outfile} was generated
 done

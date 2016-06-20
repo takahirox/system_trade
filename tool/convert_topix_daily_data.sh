@@ -79,7 +79,7 @@ do
   iconv -f SHIFT-JIS -t UTF-8 $file \
     | perl -pe "s/前場/0/g" \
     | perl -pe "s/後場/1/g" \
-    | sed -e "1,2d" \
+    | sed -e "1,1d" \
     > ${outdir}/${out_file}.csv
   echo [log] ${outdir}/${out_file}.csv was generated.
 done
