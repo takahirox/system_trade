@@ -62,11 +62,7 @@
 
 outdir=./raw_data/dji/daily
 logdir=./log/dji/daily
-url='http://www.torezista.com/assist/dji_tool.php'
-post_data='format=CSV'
-post_data+='&how=%C1%B0%C6%FC%C8%E6%A1%CA%A5%C9%A5%EB%A1%CB'
-post_data+='&filename=tmp.csv'
-post_data+='&realtime=1'
+url="http://chart.finance.yahoo.com/table.csv?s=^DJI"
 file_prefix=$(basename $0 .sh)
 
 if [ ! -e $outdir ]; then
@@ -83,7 +79,6 @@ echo [log] load $file_prefix
 wget --user-agent="" \
      -o $logdir/${file_prefix}.log \
      -O $outdir/${file_prefix}.csv \
-     ${url} \
-     --post-data="${post_data}"
+     ${url}
 echo [log] load $file_prefix done
 
