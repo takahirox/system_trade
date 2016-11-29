@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# = init_dji_daily_data.sh
+# = add_latest_dji_daily_data.sh
 #
 # Author::    takahiro
 # Copyright:: takahiro
@@ -9,7 +9,7 @@
 
 # == Version
 #
-# * 2015-08-12 1.00 (takahiro) 
+# * 2016-11-28 1.00 (takahiro) 
 #
 
 # == Summary
@@ -60,8 +60,15 @@
 # HOGE=$1
 #
 
-./tool/get_dji_daily_data.sh
-./tool/get_latest_dji_daily_data.sh
-./tool/add_latest_dji_daily_data.sh
-./tool/convert_dji_daily_data.sh
+in_file=./raw_data/dji/daily/get_latest_dji_daily_data.json
+out_file=./raw_data/dji/daily/get_dji_daily_data.csv
+tmp_file=.tmp
+
+head -1 $out_file > $tmp_file
+./tool/make_latest_dji_daily_csv.py $in_file >> $tmp_file
+cat $out_file | sed -e "1,1d" >> $tmp_file
+
+./tool/uniq_dji_daily.py $tmp_file > $out_file
+
+rm -f $tmp_file
 
