@@ -60,11 +60,14 @@
 # HOGE=$1
 #
 
-./tool/init_dji_daily_data.sh
-./tool/init_dji_future_mini_daily_data.sh
-./tool/init_nk225_daily_data.sh
-./tool/init_nk225_future_mini_daily_data.sh
-./tool/init_nk225_future_mini_minutely_data.sh
-./tool/init_topix_daily_data.sh
+error_log_file=./log/init_data.log
+
+./tool/init_dji_daily_data.sh 2>$error_log_file
+./tool/init_dji_future_mini_daily_data.sh 2>$error_log_file
+./tool/init_nk225_daily_data.sh 2>$error_log_file
+./tool/init_nk225_future_mini_daily_data.sh 2>$error_log_file
+./tool/init_nk225_future_mini_minutely_data.sh 2>$error_log_file
+./tool/init_topix_daily_data.sh 2>$error_log_file
+
 ./tool/init_usdjpy_daily_data.sh
 

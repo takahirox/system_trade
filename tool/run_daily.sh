@@ -88,6 +88,9 @@ for file in $(find ./raw_data -type f)
 do
   echo $(wc -l < $file) $(basename $file) >> .tmp
 done
+echo >> .tmp
+
+find ./log/ | xargs grep -i error 2>/dev/null | head -50 >> .tmp 
 
 cat .tmp | mail -s "$MAILSUBJECT" $MAILTO
 
