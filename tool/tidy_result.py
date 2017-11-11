@@ -10,6 +10,7 @@ __version__ = '2015-08-25 1.00 (takahiro)'
 
 import sys
 import optparse
+import math
 
 usage = "%prog [options] [filename]"
 parser = optparse.OptionParser(usage=usage)
@@ -43,7 +44,7 @@ else:
 
 keys = ['sum', 'pf', 'p_w_fee',
         'max_drawdown', 'max_s_wins', 'max_s_loses',
-        'c', 'p', 'n', 'max', 'min',
+        's_deviation', 'c', 'p', 'n', 'max', 'min',
         'pc', 'nc', 'p_pc', 'n_pc', 'pp', 'np']
 
 
@@ -64,12 +65,14 @@ def init_p():
   p['max_sum'] = 0.0
   p['suc_wins'] = 0
   p['suc_loses'] = 0
+  p['values'] = []
   return p
 
 
 def add_value(p, value):
   p['c'] += 1
   p['sum'] += value
+  p['values'].append(value)
   if value > 0.0:
     p['p'] += value
     p['pc'] += 1
@@ -114,6 +117,14 @@ def calc_value(p):
 
   p['pp'] = float(p['pc']) / float(p['c']) * 100.0
   p['np'] = float(p['nc']) / float(p['c']) * 100.0
+
+  ave = p['sum'] / p['c']
+  s = 0.0
+
+  for v in p['values']:
+    s += pow(v - ave, 2)
+
+  p['s_deviation'] = math.sqrt(s / p['c'])
 
 
 def display_header():
