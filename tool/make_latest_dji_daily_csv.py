@@ -43,6 +43,6 @@ for n in range(0, len(quote['open'])):
   volume = quote['volume'][n]
   adjclose = unadjclose[n]
 
-  print "%s,%f,%f,%f,%f,%f,%f" % (dt, open, high, low, close, volume, adjclose)
+  print "%s,%f,%f,%f,%f,%f,%f" % (dt, open, high, low, close, adjclose, volume)
 
 

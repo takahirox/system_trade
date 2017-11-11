@@ -78,6 +78,7 @@ do
   out_file=$(basename $file .csv)
   iconv -f SHIFT-JIS -t UTF-8 $file \
     | sed -e "1,1d" \
+    | cut -d, -f1,2,3,4,5,7 \
     > ${outdir}/${out_file}.csv
   echo [log] ${outdir}/${out_file}.csv was generated.
 done
