@@ -36,5 +36,7 @@ for line in stream:
   if int(is_buy) == 0:
     result = -result
 
-  print entry_date, result
+  p_result = result / float(entry_value)
+
+  print entry_date, result, p_result
 

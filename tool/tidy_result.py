@@ -44,7 +44,8 @@ else:
 
 keys = ['sum', 'pf', 'p_w_fee',
         'max_drawdown', 'max_s_wins', 'max_s_loses',
-        's_deviation', 'c', 'p', 'n', 'max', 'min',
+        'average', 'deviation', 'p_average', 'p_deviation',
+        'c', 'p', 'n', 'max', 'min',
         'pc', 'nc', 'p_pc', 'n_pc', 'pp', 'np']
 
 
@@ -65,14 +66,18 @@ def init_p():
   p['max_sum'] = 0.0
   p['suc_wins'] = 0
   p['suc_loses'] = 0
+  p['p_sum'] = 0.0
   p['values'] = []
+  p['p_values'] = []
   return p
 
 
-def add_value(p, value):
+def add_value(p, value, p_value):
   p['c'] += 1
   p['sum'] += value
+  p['p_sum'] += p_value
   p['values'].append(value)
+  p['p_values'].append(p_value)
   if value > 0.0:
     p['p'] += value
     p['pc'] += 1
@@ -118,14 +123,23 @@ def calc_value(p):
   p['pp'] = float(p['pc']) / float(p['c']) * 100.0
   p['np'] = float(p['nc']) / float(p['c']) * 100.0
 
-  ave = p['sum'] / p['c']
+  ave = float(p['sum']) / float(p['c'])
   s = 0.0
 
   for v in p['values']:
     s += pow(v - ave, 2)
 
-  p['s_deviation'] = math.sqrt(s / p['c'])
+  p['average'] = ave
+  p['deviation'] = math.sqrt(s / p['c'])
 
+  ave = float(p['p_sum']) / float(p['c'])
+  s = 0.0
+
+  for v in p['p_values']:
+    s += pow(v - ave, 2)
+
+  p['p_average'] = ave * 100.0
+  p['p_deviation'] = math.sqrt(s / p['c']) * 100.0
 
 def display_header():
   for k in keys:
@@ -151,13 +165,14 @@ dates_p = {}
 over = []
 
 for line in stream:
-  (d, value) = line.rstrip().split(' ')
+  (d, value, p_value) = line.rstrip().split(' ')
   (year, month, date) = d.split('-')
 
   year = int(year)
   month = int(month)
   date = int(date)
   value = float(value)
+  p_value = float(p_value)
 
   if not years_p.has_key(year):
     years_p[year] = init_p()
@@ -171,10 +186,10 @@ for line in stream:
   if not dates_p[year][month].has_key(date):
     dates_p[year][month][date] = init_p()
 
-  add_value(total_p, value)
-  add_value(years_p[year], value)
-  add_value(months_p[year][month], value)
-  add_value(dates_p[year][month][date], value)
+  add_value(total_p, value, p_value)
+  add_value(years_p[year], value, p_value)
+  add_value(months_p[year][month], value, p_value)
+  add_value(dates_p[year][month][date], value, p_value)
   over.append({'date': d, 'value': value, 'over': total_p['sum']})
 
 

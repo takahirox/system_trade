@@ -61,4 +61,6 @@ FILE=$1
 
 ./tool/show_equity_chart.sh $FILE
 ./tool/show_non_break_date.sh ./chart/$(basename $FILE .sql)_equity.dat
+./tool/show_drawdown.sh ./chart/$(basename $FILE .sql)_equity.dat
 ./tool/show_distribution.sh $FILE
+./tool/show_p_distribution.sh $FILE
