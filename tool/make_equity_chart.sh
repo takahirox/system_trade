@@ -64,13 +64,17 @@ datfile=$1
 imgfile=$2
 
 gnuplot -p << EOD
-set xtics rotate by 270
+set datafile separator "\t"
 set xdata time
 set timefmt "%Y-%m-%d"
-set datafile separator "\t"
+set format x "%Y-%m-%d"
+toffset=strptime("%Y-%m-%d", "2007-01-01")
+f(x)=a*(x-toffset)+b
+fit f(x) "${datfile}" u 1:3 via a,b
+set xtics rotate by 270
 set term png
 set output "${imgfile}"
-plot "${datfile}" u 1:3 w l
+plot "${datfile}" u 1:3 w l, f(x)
 set output
 EOD
 
