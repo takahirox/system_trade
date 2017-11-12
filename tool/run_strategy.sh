@@ -39,6 +39,7 @@ function usage {
   echo
   echo "options :"
   echo "  -s summary (default)"
+  echo "  -l result list"
   echo "  -y yearly"
   echo "  -m monthly"
   echo "  -d daily"
@@ -53,6 +54,7 @@ function usage {
 
 
 SUMMARY_FLAG=0
+LIST_FLAG=0
 YEARLY_FLAG=0
 MONTHLY_FLAG=0
 DAILY_FLAG=0
@@ -60,10 +62,11 @@ OVER_FLAG=0
 FROM_DATE=""
 TO_DATE=""
 
-while getopts "symdof:t:h" options
+while getopts "slymdof:t:M:h" options
 do
   case $options in
     s     ) SUMMARY_FLAG=1;;
+    l     ) LIST_FLAG=1;;
     y     ) YEARLY_FLAG=1;;
     m     ) MONTHLY_FLAG=1;;
     d     ) DAILY_FLAG=1;;
@@ -164,8 +167,13 @@ EOD
 
 cat .tmp \
   | sed "1,1d" \
-  | ./tool/extract_result.py \
-  | ./tool/tidy_result.py $OPTIONS
+  | ./tool/extract_result.py > .tmp2
 
-rm -f .tmp
+if [ $LIST_FLAG -eq 0 ]; then
+  cat .tmp2 | ./tool/tidy_result.py $OPTIONS
+else
+  cat .tmp2
+fi
+
+rm -f .tmp .tmp2
 
