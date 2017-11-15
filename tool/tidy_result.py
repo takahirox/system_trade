@@ -51,6 +51,8 @@ keys = ['sum', 'p_sum',
         'max_s_wins', 'max_s_loses',
         'average', 'p_average',
         'deviation', 'p_deviation',
+        'ave+2dev', 'p_ave+2p_dev',
+        'ave-2dev', 'p_ave-2p_dev',
         'p', 'p_p',
         'n', 'p_n',
         'max', 'p_max',
@@ -195,6 +197,11 @@ def calc_value(p):
 
     p['p_average'] = ave * 100.0
     p['p_deviation'] = math.sqrt(s / p['c']) * 100.0
+
+  p['ave+2dev'] = p['average'] + 2 * p['deviation']
+  p['ave-2dev'] = p['average'] - 2 * p['deviation']
+  p['p_ave+2p_dev'] = p['p_average'] + 2 * p['p_deviation']
+  p['p_ave-2p_dev'] = p['p_average'] - 2 * p['p_deviation']
 
   p['p_sum'] *= 100.0
   p['p_max_dd'] *= 100.0
