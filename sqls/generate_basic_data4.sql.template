@@ -16,7 +16,7 @@ update %%TABLE2%%_master t1
     where tt.date > (
             select if(
                      max(date) is NULL,
-                     0,
+                     "2000-01-01",
                      max(date)
                    )
             from %%TABLE2%%_master
@@ -69,7 +69,7 @@ from (
        where date > (
                select if(
                         max(date) is NULL,
-                        0,
+                        "2000-01-01",
                         max(date)
                       )
                from %%TABLE%%

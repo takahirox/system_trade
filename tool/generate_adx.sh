@@ -98,20 +98,21 @@ EOD
   echo [log] update $acol.
   mysql -u $USER <<EOD
     use system_trade;
+    set @max_id=(
+      select if(
+        max(id) is NULL,
+        0,
+        max(id)
+      )
+      from $table
+      where $acol is not NULL
+    );
     update $table t1
       inner join (
         select t.id id,
                t.val val
         from $TMP_TABLE t
-        where t.id>(
-                select if(
-                         max(id) is NULL,
-                         0,
-                         max(id)
-                       )
-                from $table
-                where $acol is not NULL
-              )
+        where t.id>@max_id
         order by t.id
       ) t2
       on t1.id=t2.id

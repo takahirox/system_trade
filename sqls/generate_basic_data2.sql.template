@@ -10,7 +10,7 @@ from (select *
       where date > (
               select if(
                        max(date) is NULL,
-                       0,
+                       "2000-01-01",
                        max(date)
                      )
               from %%TABLE%%

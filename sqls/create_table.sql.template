@@ -7,7 +7,7 @@ create table %%TABLE%% (
   low float(7,2),
   close float(7,2),
   volume int,
-  trading_value int,
+  trading_value bigint,
   id int,
   last_date date,
   change_price float(7,2),

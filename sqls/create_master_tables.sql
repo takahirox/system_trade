@@ -34,7 +34,7 @@ create table nk225_future_mini_daily_master (
   low int,
   close int,
   volume int,
-  trading_value int,
+  trading_value bigint,
   daily_id int
 );
 describe nk225_future_mini_daily_master;
@@ -49,7 +49,7 @@ create table nk225_future_mini_minutely_master (
   low int,
   close int,
   volume int,
-  trading_value int,
+  trading_value bigint,
   ma5 float(7,2),
   ma5_change float(7,2),
   ma10 float(7,2),

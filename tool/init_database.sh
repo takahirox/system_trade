@@ -60,6 +60,6 @@
 # HOGE=$1
 #
 
-mysql -u root < ./sqls/create_database.sql
-perl -pe "s/%%USER%%/$USER/g" ./sqls/create_user.sql.template | mysql -u root
+mysql -u root -proot < ./sqls/create_database.sql
+perl -pe "s/%%USER%%/$USER/g" ./sqls/create_user.sql.template | mysql -u root -proot
 
