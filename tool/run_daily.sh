@@ -90,7 +90,7 @@ do
 done
 echo >> .tmp
 
-find ./log/ | xargs grep -i error 2>/dev/null | head -50 >> .tmp 
+find ./log/ | xargs grep -i -e error -e fail 2>/dev/null | head -50 >> .tmp 
 
 cat .tmp | mail -s "$MAILSUBJECT" $MAILTO
 
