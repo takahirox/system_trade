@@ -60,6 +60,6 @@
 # HOGE=$1
 #
 
-./tool/get_nk225_future_mini_daily_data.sh
+#./tool/get_nk225_future_mini_daily_data.sh
 ./tool/convert_nk225_future_mini_daily_data.sh
 
